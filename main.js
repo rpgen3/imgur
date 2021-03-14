@@ -142,4 +142,5 @@ function del({ dhash, token }){
             startFlag = true;
         });
     }
+    else startFlag = true;
 })();
