@@ -1,6 +1,4 @@
-const $ = window.$,
-      rpgen3 = window.rpgen3,
-      imgur = window.imgur;
+const { $, rpgen3, imgur } = window;
 let startFlag = false;
 const h = $("<div>").appendTo($("body")).css({
     "text-align": "center",
