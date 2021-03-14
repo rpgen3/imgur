@@ -17,13 +17,25 @@ rpgen3.addTab(h,{
         "削除": h3
     }
 });
-$("<h1>").appendTo(h1).text("文字列をimgurにアップロードする");
+$("<h3>").appendTo(h1).text("文字列をimgurにアップロードする");
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    upload(strToImg(str));
+    upload(strToImg(str), true);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
+rpgen3.addInputBool(h1,{
+    title: "コピペモード",
+    change: b => {
+        inputText = rpgen3.addInputText(hInputText.empty(),{
+            textarea: true,
+            title: "自動保存されません",
+            value: inputText(),
+            readonly: b
+        });
+    }
+});
+const btnEval = $("<button>").appendTo(h1).text("メモの内容をevalする").on("click",()=>eval(inputText()));
 const hInputText = $("<div>").appendTo(h1);
 let inputText = rpgen3.addInputText(hInputText,{
     textarea: true,
@@ -60,7 +72,7 @@ function upload(base64, isMemo){
         alert("アップロードできませんでした。");
     });
 }
-$("<h2>").appendTo(h2).text("画像をimgurにアップロードする");
+$("<h3>").appendTo(h2).text("画像をimgurにアップロードする");
 const inputFile = $("<input>").appendTo(h2).attr({
     type: "file"
 }).on("change",loadImg);
@@ -81,7 +93,7 @@ function ImageToBase64(img, mime_type) {
     ctx.drawImage(img, 0, 0);
     return cv.toDataURL(mime_type);
 }
-$("<h1>").appendTo(h3).text("アップロードした内容を削除");
+$("<h3>").appendTo(h3).text("アップロードした内容を削除");
 const inputDeletePass = rpgen3.addInputText(h3,{
     title: "削除パスを入力",
     change: v => {
@@ -94,7 +106,7 @@ const btnDelete = $("<button>").appendTo(h3).text("画像を削除").on("click",
     if(!url) return alert("削除パスを入力してください。");
     del(rpgen3.getParam('?' + url));
 });
-const viewImg = $("<img>").appendTo(h3).hide();
+const viewImg = $("<img>").appendTo($("<div>").appendTo(h3)).hide();
 function del({ dhash, token }){
     disabled(true);
     imgur.delete({ dhash, token }).then(()=>{
@@ -110,7 +122,7 @@ function del({ dhash, token }){
     if(p.id){
         disabled(true);
         imgur.load(p.id).then(img => {
-            inputText = rpgen3.addInputText(hInputText,{
+            inputText = rpgen3.addInputText(hInputText.empty(),{
                 textarea: true,
                 title: "共有データ",
                 value: imgToStr(img)
