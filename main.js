@@ -50,7 +50,7 @@ function upload(base64, isMemo){
     imgur.upload(base64).then(({ id, dhash, token })=>{
         disabled(false);
         btnSharing.hide();
-        btnSharingStop.show().off("click","**").on("click",()=>{
+        btnSharingStop.show().off("click").on("click",()=>{
             del({ dhash, token });
             btnSharingStop.hide();
             btnSharing.show();
