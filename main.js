@@ -42,7 +42,7 @@ let inputText = rpgen3.addInputText(hInputText,{
     title: "メモ帳",
     save: "メモ帳"
 });
-const disabled = b => inputFile.add(btnSharing).add(btnSharingStop).attr("disabled", b);
+const disabled = b => inputFile.add(btnSharing).add(btnSharingStop).add(btnDelete).attr("disabled", b);
 function upload(base64, isMemo){
     disabled(true);
     imgur.upload(base64).then(({ id, dhash, token })=>{
