@@ -27,6 +27,7 @@ const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
 rpgen3.addInputBool(h1,{
     title: "コピペモード",
     change: b => {
+        if(!hInputText) return;
         inputText = rpgen3.addInputText(hInputText.empty(),{
             textarea: true,
             title: "自動保存されません",
