@@ -82,6 +82,19 @@ $("<h3>").appendTo(h2).text("画像をimgurにアップロードする");
 const inputFile = $("<input>").appendTo(h2).attr({
     type: "file"
 }).on("change",loadImg);
+const defaultText = "クリップボードの画像をここに貼り付け",
+      inputPaste = $("<div>").appendTo(h2).text(defaultText).attr({
+          contenteditable: true
+      }).css({
+          width: "70vw",
+          height: "30vh",
+          border: "2px solid #000000",
+          margin:  "0 auto"
+      }).on("input",()=>{
+          const base64 = inputPaste.find("img").attr("src");
+          if(base64 && /^data:image/.test(base64)) upload(base64);
+          inputPaste.text(defaultText);
+      });
 function loadImg(e){
     disabled(true);
     const file = e.target.files[0];
