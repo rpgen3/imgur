@@ -21,7 +21,7 @@
     }
     let tokens = [];
     $.ajax({
-        url: "https://rpgen3.github.io/imgur/token.txt"
+        url: "https://rpgen3.github.io/imgur/mylib/token.txt"
     }).done(d=>{
         tokens = d.split('\n').filter(v=>v);
     }).fail(()=>{
