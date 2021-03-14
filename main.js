@@ -55,13 +55,19 @@ function upload(base64, isMemo){
             btnSharingStop.hide();
             btnSharing.show();
         });
-        const url = `https://rpgen3.github.io/imgur/?id=${id}`;
         output.empty();
         if(isMemo){
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: url
+                value: `https://rpgen3.github.io/imgur/?id=${id}`
+            });
+        }
+        else {
+            rpgen3.addInputText(output,{
+                readonly: true,
+                title: "画像URL",
+                value: `https://i.imgur.com/${id}.png`
             });
         }
         rpgen3.addInputText(output,{
