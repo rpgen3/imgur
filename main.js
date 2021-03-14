@@ -1,6 +1,7 @@
 const $ = window.$,
       rpgen3 = window.rpgen3,
       imgur = window.imgur;
+let startFlag = false;
 const h = $("<div>").appendTo($("body")).css({
     "text-align": "center",
     padding: "1em"
@@ -27,7 +28,7 @@ const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
 rpgen3.addInputBool(h1,{
     title: "コピペモード",
     change: b => {
-        if(!hInputText) return;
+        if(!startFlag) return;
         inputText = rpgen3.addInputText(hInputText.empty(),{
             textarea: true,
             title: "自動保存されません",
@@ -130,6 +131,9 @@ function del({ dhash, token }){
             });
         })
             .catch(()=>alert("共有データの読み込みに失敗しました。"))
-            .finally(()=>disabled(false));
+            .finally(()=>{
+            disabled(false);
+            startFlag = true;
+        });
     }
 })();
