@@ -101,7 +101,7 @@ function ImageToBase64(img, mime_type) {
     ctx.drawImage(img, 0, 0);
     return cv.toDataURL(mime_type);
 }
-$("<h3>").appendTo(h3).text("アップロードした内容を削除");
+$("<h3>").appendTo(h3).text("アップロードした画像を削除");
 const inputDeletePass = rpgen3.addInputText(h3,{
     title: "削除パスを入力",
     change: v => {
