@@ -40,7 +40,7 @@
                 url: "https://api.imgur.com/3/upload.json",
                 type: "POST",
                 data: {
-                    image: dataURL
+                    image: dataURL.replace(/^[^,]+;base64,/, '')
                 },
                 success: r =>{
                     const d = r.data,
