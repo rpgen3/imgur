@@ -29,7 +29,7 @@
             window.imgur[v] = () => new Promise((resolve, reject) => reject);
         });
     });
-    function upload(dataURL){
+    function upload(base64){
         const token = rpgen3.randArray(tokens);
         return new Promise((resolve, reject) => {
             $.ajax({
@@ -40,16 +40,14 @@
                 url: "https://api.imgur.com/3/upload.json",
                 type: "POST",
                 data: {
-                    image: dataURL.replace(/^[^,]+;base64,/, '')
-                },
-                success: r =>{
-                    const d = r.data,
-                          id = d.id,
-                          dhash = d.deletehash;
-                    resolve({ id, dhash, token });
-                },
-                error: reject
-            });
+                    image: base64.replace(/^[^,]+;base64,/, '')
+                }
+            }).done(r=>{
+                const d = r.data,
+                      id = d.id,
+                      dhash = d.deletehash;
+                resolve({ id, dhash, token });
+            }).fail(reject);
         });
     }
     function del({dhash, token}){
@@ -60,10 +58,8 @@
                     Authorization: 'Client-ID ' + token
                 },
                 url: "https://api.imgur.com/3/image/" + dhash,
-                type: "DELETE",
-                success: resolve,
-                error: reject
-            });
+                type: "DELETE"
+            }).done(resolve).fail(reject);
         });
     }
     window.imgur = {
