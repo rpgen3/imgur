@@ -29,8 +29,9 @@
             window.imgur[v] = () => new Promise((resolve, reject) => reject);
         });
     });
+    const randArray = ar => ar[Math.floor(Math.random() * ar.length)];
     function upload(base64){
-        const token = rpgen3.randArray(tokens);
+        const token = randArray(tokens);
         return new Promise((resolve, reject) => {
             $.ajax({
                 dataType: 'json',
