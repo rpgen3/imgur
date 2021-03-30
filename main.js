@@ -20,7 +20,7 @@ $("<h3>").appendTo(h1).text("文字列をimgurにアップロードする");
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    upload(strToImg(str), true);
+    upload(rpgen3.strToImg(str), true);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
 rpgen3.addInputBool(h1,{
@@ -144,7 +144,7 @@ function del({ dhash, token }){
             inputText = rpgen3.addInputText(hInputText.empty(),{
                 textarea: true,
                 title: "共有データ",
-                value: imgToStr(img)
+                value: rpgen3.imgToStr(img)
             });
         })
             .catch(()=>alert("共有データの読み込みに失敗しました。"))
