@@ -141,20 +141,18 @@ function del({ dhash, token }){
 }
 (()=>{
     const p = rpgen3.getParam();
-    if(p.imgur){
-        disabled(true);
-        imgur.load(p.imgur).then(img => {
-            inputText = rpgen3.addInputText(hInputText.empty(),{
-                textarea: true,
-                title: "共有データ",
-                value: rpgen3.imgToStr(img)
-            });
-        })
-            .catch(()=>alert("共有データの読み込みに失敗しました。"))
-            .finally(()=>{
-            disabled(false);
-            startFlag = true;
+    if(!p.imgur) return (startFlag = true);
+    disabled(true);
+    imgur.load(p.imgur).then(img => {
+        inputText = rpgen3.addInputText(hInputText.empty(),{
+            textarea: true,
+            title: "共有データ",
+            value: rpgen3.imgToStr(img)
         });
-    }
-    else startFlag = true;
+    })
+        .catch(()=>alert("共有データの読み込みに失敗しました。"))
+        .finally(()=>{
+        disabled(false);
+        startFlag = true;
+    });
 })();
