@@ -81,7 +81,7 @@ function upload(base64, isMemo){
 $("<h3>").appendTo(h2).text("画像をimgurにアップロードする");
 const inputFile = $("<input>").appendTo(h2).attr({
     type: "file"
-}).on("change",loadImg);
+}).on("change",loadFile);
 const defaultText = "クリップボードの画像をここに貼り付け",
       inputPaste = $("<div>").appendTo(h2).text(defaultText).attr({
           contenteditable: true
@@ -91,20 +91,16 @@ const defaultText = "クリップボードの画像をここに貼り付け",
           border: "2px solid #000000",
           margin:  "0 auto"
       }).on("input",()=>{
-          const img = inputPaste.find("img"),
-                src = img.attr("src");
-          if(/^data:image/.test(src)) upload(src);
-          else upload(ImageToBase64(img.get(0), 'image/png'));
+          upload(inputPaste.find("img").attr("src"));
           inputPaste.text(defaultText);
       });
-function loadImg(e){
+function loadFile(e){
     disabled(true);
     const file = e.target.files[0];
     if(!file) return;
-    const blobUrl = window.URL.createObjectURL(file),
-          img = new Image();
+    const img = new Image();
     img.onload = () => upload(ImageToBase64(img, file.type));
-    img.src = blobUrl;
+    img.src = window.URL.createObjectURL(file);
 }
 function ImageToBase64(img, mime_type) {
     const cv = document.createElement('canvas');
@@ -112,6 +108,7 @@ function ImageToBase64(img, mime_type) {
     cv.height = img.height;
     const ctx = cv.getContext('2d');
     ctx.drawImage(img, 0, 0);
+    console.log(img, cv.width, cv.height)
     return cv.toDataURL(mime_type);
 }
 $("<h3>").appendTo(h3).text("アップロードした画像を削除");
