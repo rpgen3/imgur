@@ -93,10 +93,9 @@ const defaultText = "クリップボードの画像をここに貼り付け",
       }).on("input",()=>{
           const img = inputPaste.find("img"),
                 src = img.attr("src");
-          inputPaste.text(defaultText);
-          if(!src) return;
           if(/^data:image/.test(src)) upload(src);
-          else upload(ImageToBase64(img, 'image/png'));
+          else upload(ImageToBase64(img.get(0), 'image/png'));
+          inputPaste.text(defaultText);
       });
 function loadImg(e){
     disabled(true);
