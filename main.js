@@ -28,6 +28,7 @@ rpgen3.addInputBool(h1,{
     change: b => {
         if(!startFlag) return;
         inputText = rpgen3.addInputText(hInputText.empty(),{
+            hankaku: false,
             textarea: true,
             title: "自動保存されません",
             value: inputText(),
@@ -141,6 +142,7 @@ function del({ dhash, token }){
     disabled(true);
     imgur.load(p.imgur).then(img => {
         inputText = rpgen3.addInputText(hInputText.empty(),{
+            hankaku: false,
             textarea: true,
             title: "共有データ",
             value: rpgen3.imgToStr(img)
