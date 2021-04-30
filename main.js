@@ -58,7 +58,7 @@ function upload(base64, isMemo){
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: `https://rpgen3.github.io/imgur/?id=${id}`
+                value: `https://rpgen3.github.io/imgur/?imgur=${id}`
             });
         }
         else {
@@ -91,9 +91,12 @@ const defaultText = "クリップボードの画像をここに貼り付け",
           border: "2px solid #000000",
           margin:  "0 auto"
       }).on("input",()=>{
-          const base64 = inputPaste.find("img").attr("src");
-          if(base64 && /^data:image/.test(base64)) upload(base64);
+          const img = inputPaste.find("img"),
+                src = img.attr("src");
           inputPaste.text(defaultText);
+          if(!src) return;
+          if(/^data:image/.test(src)) upload(src);
+          else upload(ImageToBase64(img, 'image/png'));
       });
 function loadImg(e){
     disabled(true);
@@ -117,7 +120,7 @@ const inputDeletePass = rpgen3.addInputText(h3,{
     title: "削除パスを入力",
     change: v => {
         const p = rpgen3.getParam('?' + v);
-        if(p.id) viewImg.attr("src", `https://i.imgur.com/${p.id}.png`).show();
+        if(p.imgur) viewImg.attr("src", `https://i.imgur.com/${p.imgur}.png`).show();
     }
 });
 const btnDelete = $("<button>").appendTo(h3).text("画像を削除").on("click",v=>{
@@ -138,9 +141,9 @@ function del({ dhash, token }){
 }
 (()=>{
     const p = rpgen3.getParam();
-    if(p.id){
+    if(p.imgur){
         disabled(true);
-        imgur.load(p.id).then(img => {
+        imgur.load(p.imgur).then(img => {
             inputText = rpgen3.addInputText(hInputText.empty(),{
                 textarea: true,
                 title: "共有データ",
