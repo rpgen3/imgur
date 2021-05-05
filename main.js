@@ -17,10 +17,14 @@ rpgen3.addTab(h,{
     }
 });
 $("<h3>").appendTo(h1).text("文字列をimgurにアップロードする");
+const inputPass = rpgen3.addInputText(h1,{
+    title: "password",
+    hankaku: false
+});
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    upload(strToImg(str), true);
+    upload(strToImg(encode(str, inputPass())), true);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
 rpgen3.addInputBool(h1,{
@@ -56,10 +60,11 @@ function upload(base64, isMemo){
         });
         output.empty();
         if(isMemo){
+            const pass = inputPass();
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: `https://rpgen3.github.io/imgur/?imgur=${id}`
+                value: `https://rpgen3.github.io/imgur/?imgur=${id}` + (pass ? `&pass=${rpgen3.encode(pass)}` : '')
             });
         }
         else {
@@ -145,7 +150,7 @@ function del({ deletehash, token }){
             hankaku: false,
             textarea: true,
             title: "共有データ",
-            value: imgToStr(img)
+            value: decode(imgToStr(img), (p.pass ? rpgen3.decode(p.pass) : ''))
         });
         $("title").text(p.imgur);
     })
@@ -155,3 +160,50 @@ function del({ deletehash, token }){
         startFlag = true;
     });
 })();
+function encode(str, pass){
+    if(!pass) return str;
+    //パスワードはUTF-8エンコーディング
+    var secret_passphrase = CryptoJS.enc.Utf8.parse(pass);
+    var salt = CryptoJS.lib.WordArray.random(128 / 8);
+    var key128Bits500Iterations = CryptoJS.PBKDF2(secret_passphrase, salt, {keySize: 128 / 8, iterations: 500 });
+    //初期化ベクトル（ブロック長と同じ）
+    var iv = CryptoJS.lib.WordArray.random(128 / 8);
+    //暗号化オプション（IV:初期化ベクトル, CBCモード, パディングモード：PKCS7
+    var options = {iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7};
+    //暗号化内容のエンコーディングは「UTF-8」
+    var message_text = CryptoJS.enc.Utf8.parse(str);
+
+    //----------------------------------------------------------------------
+    //暗号化
+    var encrypted = CryptoJS.AES.encrypt(message_text, key128Bits500Iterations, options);
+    //----------------------------------------------------------------------
+
+    //暗号結果データをカンマ（","）で結合してまとめる（復号時にわかるように）
+    //（salt + iv + ciphertext)
+    return [
+        CryptoJS.enc.Hex.stringify(salt),
+        CryptoJS.enc.Hex.stringify(iv),
+        encrypted
+    ].join(',');
+}
+function decode(str, pass){
+    if(!pass) return str;
+    // あからじめ仕込んでおいた暗号化データのカンマ","を使って文字列をそれぞれに分割
+    var array_rawData = str.split(',');
+
+    var salt = CryptoJS.enc.Hex.parse(array_rawData[0]);  // パスワードSalt
+    var iv = CryptoJS.enc.Hex.parse(array_rawData[1]);    // 初期化ベクトル（IV）
+    var encrypted_data = CryptoJS.enc.Base64.parse(array_rawData[2]); //暗号化データ本体
+
+    //パスワード（鍵空間の定義）
+    var secret_passphrase = CryptoJS.enc.Utf8.parse(pass);
+    var key128Bits500Iterations = CryptoJS.PBKDF2(secret_passphrase, salt, {keySize: 128 / 8, iterations: 500 });
+
+    //復号オプション（暗号化と同様）
+    var options = {iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7};
+
+    //復号
+    var decrypted = CryptoJS.AES.decrypt({"ciphertext":encrypted_data}, key128Bits500Iterations, options);
+    // 文字コードをUTF-8にする
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
