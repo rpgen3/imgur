@@ -17,14 +17,11 @@ rpgen3.addTab(h,{
     }
 });
 $("<h3>").appendTo(h1).text("文字列をimgurにアップロードする");
-const inputPass = rpgen3.addInputText(h1,{
-    title: "password",
-    hankaku: false
-});
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    upload(strToImg(encode(str, inputPass())), true);
+    const pass = makePass();
+    upload(strToImg(encode(str, pass)), pass);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
 rpgen3.addInputBool(h1,{
@@ -60,11 +57,10 @@ function upload(base64, isMemo){
         });
         output.empty();
         if(isMemo){
-            const pass = inputPass();
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: `https://rpgen3.github.io/imgur/?imgur=${id}` + (pass ? `&pass=${rpgen3.encode(pass)}` : '')
+                value: `https://rpgen3.github.io/imgur/?imgur=${id}&pass=${isMemo}`
             });
         }
         else {
@@ -150,7 +146,7 @@ function del({ deletehash, token }){
             hankaku: false,
             textarea: true,
             title: "共有データ",
-            value: decode(imgToStr(img), (p.pass ? rpgen3.decode(p.pass) : ''))
+            value: decode(imgToStr(img), p.pass)
         });
         $("title").text(p.imgur);
     })
@@ -206,4 +202,7 @@ function decode(str, pass){
     var decrypted = CryptoJS.AES.decrypt({"ciphertext":encrypted_data}, key128Bits500Iterations, options);
     // 文字コードをUTF-8にする
     return decrypted.toString(CryptoJS.enc.Utf8);
+}
+function makePass(){
+    return new Array(8).fill().map(v=>rpgen3.randArray("0123456789" + "abcdefghijklmnopqrstuvwxyz")).join('');
 }
