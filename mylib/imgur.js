@@ -44,10 +44,8 @@
                     image: base64.replace(/^[^,]+;base64,/, '')
                 }
             }).done(r=>{
-                const d = r.data,
-                      id = d.id,
-                      dhash = d.deletehash;
-                resolve({ id, dhash, token });
+                const { id, deletehash } = r.data;
+                resolve({ id, deletehash, token });
             }).fail(reject);
         });
     }
