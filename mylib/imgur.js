@@ -49,14 +49,14 @@
             }).fail(reject);
         });
     }
-    function del({dhash, token}){
+    function del({deletehash, token}){
         return new Promise((resolve, reject) => {
             $.ajax({
                 dataType: 'json',
                 headers: {
                     Authorization: 'Client-ID ' + token
                 },
-                url: "https://api.imgur.com/3/image/" + dhash,
+                url: "https://api.imgur.com/3/image/" + deletehash,
                 type: "DELETE"
             }).done(resolve).fail(reject);
         });
