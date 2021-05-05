@@ -46,11 +46,11 @@ let inputText = rpgen3.addInputText(hInputText,{
 const disabled = b => inputFile.add(btnSharing).add(btnSharingStop).add(btnDelete).attr("disabled", b);
 function upload(base64, isMemo){
     disabled(true);
-    imgur.upload(base64).then(({ id, dhash, token })=>{
+    imgur.upload(base64).then(({ id, deletehash, token })=>{
         disabled(false);
         btnSharing.hide();
         btnSharingStop.show().off("click").on("click",()=>{
-            del({ dhash, token });
+            del({ deletehash, token });
             btnSharingStop.hide();
             btnSharing.show();
         });
@@ -72,7 +72,7 @@ function upload(base64, isMemo){
         rpgen3.addInputText(output,{
             readonly: true,
             title: "削除パス",
-            value: `id=${id}&dhash=${dhash}&token=${token}`
+            value: `id=${id}&deletehash=${deletehash}&token=${token}`
         });
     }).catch(()=>{
         disabled(false);
@@ -126,9 +126,9 @@ const btnDelete = $("<button>").appendTo(h3).text("画像を削除").on("click",
     del(rpgen3.getParam('?' + url));
 });
 const viewImg = $("<img>").appendTo($("<div>").appendTo(h3)).hide();
-function del({ dhash, token }){
+function del({ deletehash, token }){
     disabled(true);
-    imgur.delete({ dhash, token }).then(()=>{
+    imgur.delete({ deletehash, token }).then(()=>{
         alert("削除しました。");
         disabled(false);
     }).catch(()=>{
