@@ -17,10 +17,14 @@ rpgen3.addTab(h,{
     }
 });
 $("<h3>").appendTo(h1).text("文字列をimgurにアップロードする");
+const inputPass = rpgen3.addInputText(h1,{
+    title: "pass",
+    change: v => v.replace(/[^0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]/g,'')
+});
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    const pass = makePass();
+    const pass = inputPass();
     upload(strToImg(encode(str, pass)), pass);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
@@ -202,7 +206,4 @@ function decode(str, pass){
     var decrypted = CryptoJS.AES.decrypt({"ciphertext":encrypted_data}, key128Bits500Iterations, options);
     // 文字コードをUTF-8にする
     return decrypted.toString(CryptoJS.enc.Utf8);
-}
-function makePass(){
-    return new Array(8).fill().map(v=>rpgen3.randArray("0123456789" + "abcdefghijklmnopqrstuvwxyz")).join('');
 }
