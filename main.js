@@ -60,10 +60,11 @@ function upload(base64, isMemo){
         });
         output.empty();
         if(isMemo){
+            const ps = inputPass();
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: `https://rpgen3.github.io/imgur/?imgur=${id}&pass=${inputPass()}`
+                value: `https://rpgen3.github.io/imgur/?imgur=${id}` + (ps ? `&pass=${ps}` : '')
             });
         }
         else {
