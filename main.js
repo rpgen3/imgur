@@ -24,8 +24,7 @@ const inputPass = rpgen3.addInputText(h1,{
 const btnSharing = $("<button>").appendTo(h1).text("共有").on("click",()=>{
     const str = inputText();
     if(!str) return alert("共有する内容がありません。");
-    const pass = inputPass();
-    upload(strToImg(encode(str, pass)), pass);
+    upload(strToImg(encode(str, inputPass())), true);
 }),
       btnSharingStop = $("<button>").appendTo(h1).text("共有停止").hide();
 rpgen3.addInputBool(h1,{
@@ -64,7 +63,7 @@ function upload(base64, isMemo){
             rpgen3.addInputText(output,{
                 readonly: true,
                 title: "共有用URL",
-                value: `https://rpgen3.github.io/imgur/?imgur=${id}&pass=${isMemo}`
+                value: `https://rpgen3.github.io/imgur/?imgur=${id}&pass=${inputPass()}`
             });
         }
         else {
